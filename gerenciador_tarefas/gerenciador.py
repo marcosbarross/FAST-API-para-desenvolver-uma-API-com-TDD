@@ -2,8 +2,8 @@ from fastapi import FastAPI
 
 
 app = FastAPI()
-TAREFAS = []
 
+TAREFAS = []
 
 
 @app.get("/tarefas")
