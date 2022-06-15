@@ -147,9 +147,3 @@ def test_quando_criar_uma_tarefa_esta_deve_ser_persistida():
     assert len(TAREFAS) == 1
     TAREFAS.clear()
 
-@app.post('/tarefas', response_model=Tarefa, status_code=status.HTTP_201_CREATED)
-def criar(tarefa: TarefaEntrada):
-    nova_tarefa = tarefa.dict()
-    nova_tarefa.update({"id": uuid4()})
-    TAREFAS.append(nova_tarefa)
-    return nova_tarefa

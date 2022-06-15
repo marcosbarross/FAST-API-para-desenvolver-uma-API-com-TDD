@@ -4,6 +4,8 @@ from uuid import UUID, uuid4
 from fastapi import FastAPI, status
 from pydantic import BaseModel, constr
 
+from operator import itemgetter
+
 
 class EstadosPossiveis(str, Enum):
     finalizado = "finalizado"
@@ -43,21 +45,35 @@ TAREFAS = [
 
 @app.post('/tarefas', response_model=Tarefa, status_code=status.HTTP_201_CREATED)
 
+#Põe em ordem e lista as tarefas
 @app.get("/tarefas")
 def listar():
-    return TAREFAS
-
-@app.post('/tarefas')
-def criar():
-    pass
+    return sorted(TAREFAS)
 
 @app.post('/tarefas')
 def criar(tarefa: Tarefa):
     pass
 
-@app.post('/tarefas')
+
+@app.post('/tarefas', response_model=Tarefa, status_code=status.HTTP_201_CREATED)
 def criar(tarefa: TarefaEntrada):
     nova_tarefa = tarefa.dict()
     nova_tarefa.update({"id": uuid4()})
+    TAREFAS.append(nova_tarefa)
     return nova_tarefa
+
+#deleta tarefa
+@app.delete('/tarefas/86d92774-281c-4e5a-87f2-69029177bfd2', status_code=status.HTTP_204_NO_CONTENT)
+def deletar(tarefa: TarefaEntrada):
+    tarefa_removida = tarefa.dict()
+    tarefa_removida.update({"id": '86d92774-281c-4e5a-87f2-69029177bfd2'})
+    TAREFAS.remove(tarefa_removida)
+    return TAREFAS
+
+#finaliza tarefa
+@app.put('/tarefas/86d92774-281c-4e5a-87f2-69029177bfd2', status_code=status.HTTP_200_OK)
+def completar(tarefa: TarefaEntrada):
+    tarefa_completa = tarefa.dict()
+    tarefa_completa.update({"estado": 'finalizado'})
+    return TAREFAS
 
